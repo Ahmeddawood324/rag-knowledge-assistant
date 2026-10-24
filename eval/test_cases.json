@@ -1,0 +1,56 @@
+{
+  "description": "Evaluation set. category = single | followup | memory | unanswerable | multilingual. requires_semantic=true cases are skipped when the offline hashing embeddings are used.",
+  "cases": [
+    {"id": "S01", "category": "single", "turns": [
+      {"question": "What is the minimum cumulative GPA to avoid academic probation?", "expected_keywords": ["2.0"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "S02", "category": "single", "turns": [
+      {"question": "How many credit hours are required to graduate?", "expected_keywords": ["132"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "S03", "category": "single", "turns": [
+      {"question": "What happens if a student is absent from more than 25 percent of the sessions?", "expected_keywords": ["deprived"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "S04", "category": "single", "turns": [
+      {"question": "Who teaches Machine Learning?", "expected_keywords": ["Sara Khalil"], "expected_sources": ["courses.csv"]}]},
+    {"id": "S05", "category": "single", "turns": [
+      {"question": "What are the prerequisites for Natural Language Processing?", "expected_keywords": ["AI350"], "expected_sources": ["courses.csv"]}]},
+    {"id": "S06", "category": "single", "turns": [
+      {"question": "How much is the makeup exam fee?", "expected_keywords": ["200"], "expected_sources": ["fees.csv", "academic_handbook.pdf"]}]},
+    {"id": "S07", "category": "single", "turns": [
+      {"question": "When is the library open on Saturday?", "expected_keywords": ["9:00", "15:00"], "expected_sources": ["student_services.pdf"]}]},
+    {"id": "S08", "category": "single", "turns": [
+      {"question": "What is the maximum number of credit hours in the summer semester?", "expected_keywords": ["9 credit"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "S09", "category": "single", "turns": [
+      {"question": "What is the tuition per credit hour for the Artificial Intelligence program?", "expected_keywords": ["2200"], "expected_sources": ["fees.csv"]}]},
+    {"id": "S10", "category": "single", "turns": [
+      {"question": "Which room is the Deep Learning class in?", "expected_keywords": ["Lab 5"], "expected_sources": ["courses.csv"]}]},
+    {"id": "S11", "category": "single", "turns": [
+      {"question": "How many training hours are required for the summer internship?", "expected_keywords": ["160"], "expected_sources": ["student_services.pdf", "academic_handbook.pdf"]}]},
+    {"id": "S12", "category": "single", "turns": [
+      {"question": "How long do I have to submit a grade appeal?", "expected_keywords": ["7 days"], "expected_sources": ["academic_handbook.pdf"]}]},
+
+    {"id": "F01", "category": "followup", "turns": [
+      {"question": "Tell me about the Machine Learning course.", "expected_keywords": ["Sara Khalil"], "expected_sources": ["courses.csv"]},
+      {"question": "What are its prerequisites?", "expected_keywords": ["AI301"], "expected_sources": ["courses.csv"]},
+      {"question": "How many credit hours is it?", "expected_keywords": ["4"], "expected_sources": ["courses.csv"]}]},
+    {"id": "F02", "category": "followup", "turns": [
+      {"question": "How many credit hours do I need to graduate?", "expected_keywords": ["132"], "expected_sources": ["academic_handbook.pdf"]},
+      {"question": "And what CGPA do I need?", "expected_keywords": ["2.0"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "F03", "category": "followup", "turns": [
+      {"question": "When is the library open on Saturday?", "expected_keywords": ["9:00"], "expected_sources": ["student_services.pdf"]},
+      {"question": "How many books can I borrow there?", "expected_keywords": ["5 books"], "expected_sources": ["student_services.pdf"]}]},
+
+    {"id": "M01", "category": "memory", "turns": [
+      {"question": "How many credit hours do I need to graduate?", "expected_keywords": ["132"], "expected_sources": ["academic_handbook.pdf"]},
+      {"question": "And what CGPA do I need?", "expected_keywords": ["2.0"], "expected_sources": ["academic_handbook.pdf"]},
+      {"question": "What did I ask you first?", "expected_keywords": ["credit hours", "graduate"]}]},
+
+    {"id": "U01", "category": "unanswerable", "turns": [
+      {"question": "Who won the football World Cup in 2022?", "expect_unanswerable": true}]},
+    {"id": "U02", "category": "unanswerable", "turns": [
+      {"question": "What is the cafeteria menu for tomorrow?", "expect_unanswerable": true}]},
+
+    {"id": "A01", "category": "multilingual", "requires_semantic": true, "turns": [
+      {"question": "ما هي نسبة الغياب التي تؤدي إلى الحرمان من الامتحان النهائي؟", "expected_keywords": ["25"], "expected_sources": ["academic_handbook.pdf"]}]},
+    {"id": "A02", "category": "multilingual", "requires_semantic": true, "turns": [
+      {"question": "كم عدد الساعات المعتمدة المطلوبة للتخرج؟", "expected_keywords": ["132"], "expected_sources": ["academic_handbook.pdf"]},
+      {"question": "وما هو الحد الأدنى للمعدل التراكمي؟", "expected_keywords": ["2.0"], "expected_sources": ["academic_handbook.pdf"]}]}
+  ]
+}

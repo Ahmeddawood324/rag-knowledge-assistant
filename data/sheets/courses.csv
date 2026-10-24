@@ -1,0 +1,19 @@
+Course Code,Course Name,Credit Hours,Level,Semester,Prerequisites,Instructor,Day and Time,Room,Capacity
+CS101,Introduction to Programming,3,1,Fall,None,Dr. Mona Fathy,Sun 09:00-11:00,Lab 1,40
+CS102,Object-Oriented Programming,3,1,Spring,CS101,Dr. Mona Fathy,Mon 11:00-13:00,Lab 2,40
+MA101,Calculus I,3,1,Fall,None,Dr. Hassan Ali,Tue 09:00-11:00,Hall A,80
+HU101,Technical Writing,2,1,Spring,None,Dr. Nadia Farouk,Sat 10:00-12:00,Hall D,90
+MA201,Linear Algebra,3,2,Fall,MA101,Dr. Hassan Ali,Wed 11:00-13:00,Hall B,60
+CS201,Data Structures,4,2,Fall,CS102,Dr. Karim Nabil,Sun 11:00-14:00,Lab 3,35
+CS210,Database Systems,3,2,Spring,CS201,Dr. Laila Samir,Thu 09:00-12:00,Lab 2,35
+ST201,Probability and Statistics,3,2,Spring,MA101,Dr. Hassan Ali,Tue 11:00-14:00,Hall A,70
+CS301,Algorithms,3,3,Fall,CS201 and MA201,Dr. Karim Nabil,Mon 13:00-16:00,Hall C,50
+CS310,Operating Systems,3,3,Spring,CS201,Dr. Omar Zaki,Tue 12:00-15:00,Hall B,50
+CS320,Computer Networks,3,3,Spring,CS201,Dr. Omar Zaki,Wed 13:00-16:00,Hall C,50
+CS330,Software Engineering,3,3,Fall,CS210,Dr. Laila Samir,Tue 13:00-16:00,Hall A,50
+AI301,Introduction to Artificial Intelligence,3,3,Fall,CS201 and MA201,Dr. Sara Khalil,Wed 09:00-12:00,Lab 4,30
+AI350,Machine Learning,4,3,Spring,AI301,Dr. Sara Khalil,Sun 13:00-17:00,Lab 4,30
+AI401,Natural Language Processing,3,4,Fall,AI350,Dr. Youssef Adel,Mon 09:00-12:00,Lab 5,25
+AI410,Deep Learning,3,4,Spring,AI350,Dr. Youssef Adel,Thu 13:00-16:00,Lab 5,25
+CS490,Graduation Project I,3,4,Fall,100 completed credit hours,Dr. Karim Nabil,By appointment,Project Room,20
+CS495,Graduation Project II,3,4,Spring,CS490,Dr. Karim Nabil,By appointment,Project Room,20

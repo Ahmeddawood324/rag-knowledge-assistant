@@ -1,0 +1,23 @@
+# Core (tested with the versions in comments)
+langchain-core>=1.0          # tested 1.6.9
+langchain-community>=0.4     # tested 0.4.2  (FAISS wrapper)
+langchain-text-splitters>=1.0
+faiss-cpu>=1.8               # tested 1.15.1
+pypdf>=5.0
+pandas>=2.0
+python-dotenv>=1.0
+numpy
+
+# Embeddings (pick one - default is HuggingFace, free, multilingual, runs locally)
+langchain-huggingface
+sentence-transformers
+# langchain-openai           # for EMBEDDING_PROVIDER=openai and/or LLM_PROVIDER=openai
+
+# LLM (pick one, uncomment)
+langchain-openai             # LLM_PROVIDER=openai   (needs OPENAI_API_KEY)
+# langchain-google-genai     # LLM_PROVIDER=gemini   (needs GOOGLE_API_KEY, has a free tier)
+# langchain-ollama           # LLM_PROVIDER=ollama   (local, free, needs Ollama installed)
+
+# Only for regenerating sample data / running tests
+reportlab
+pytest
