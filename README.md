@@ -4,8 +4,7 @@ A conversational assistant that answers questions from **PDF documents** and **G
 
 Built as a mid-term project on Retrieval-Augmented Generation (RAG).
 
-**Demo video:** [Watch here](https://drive.google.com/file/d/1KL4UVGBZWZGQs-ShiV8PUlauwMD95so3/view?usp=drive_link)
-
+**Demo video:** [Watch here](https://drive.google.com/file/d/1sLaQyBKEcYdpHM_SCqZljGT-e_gkM775/view?usp=drive_link)
 ## Features
 
 - **Data integration**: PDFs are read page by page (file name and page number kept for citations); Google Sheets / CSV rows are converted to `Column: value` text.
