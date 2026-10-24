@@ -1,81 +1,115 @@
-# Delta Assistant - AI Knowledge Assistant with Memory (RAG + LangChain)
+# RAG Knowledge Assistant with Memory
 
-Mid-term project (Week 3). A chat assistant that answers questions from **PDFs** and **Google Sheets**,
-cites its sources, and **remembers the conversation** so follow-up questions work
-("Tell me about Machine Learning" -> "What are its prerequisites?").
+A conversational assistant that answers questions from **PDF documents** and **Google Sheets / CSV tables**, built with **LangChain**, **FAISS** and multilingual **HuggingFace embeddings** (Arabic + English). It keeps the chat history, so follow-up questions work: *"Tell me about the Machine Learning course"* → *"What are its prerequisites?"*
 
-The demo knowledge base is a fictional university (handbook, services guide, course catalog, fees).
-Replace the files in `data/` with your own to use any other domain.
+Built as a mid-term project on Retrieval-Augmented Generation (RAG).
+
+**Demo video:** [Watch here](https://drive.google.com/file/d/1KL4UVGBZWZGQs-ShiV8PUlauwMD95so3/view?usp=drive_link)
+
+## Features
+
+- **Data integration**: PDFs are read page by page (file name and page number kept for citations); Google Sheets / CSV rows are converted to `Column: value` text.
+- **Semantic search**: multilingual sentence embeddings + a FAISS index cached on disk and rebuilt automatically when the data or settings change.
+- **RAG pipeline** (`app.py`): rewrite the follow-up question using the chat history → retrieve top-k chunks → answer with an LLM, citing the sources.
+- **Conversation memory**: full buffer memory, plus an optional summary-buffer memory for long chats.
+- **Web UI** (`web_app.py`): runs in the browser **without an LLM or API key**; shows the closest passages with file, page/row and a similarity score.
+- **Pluggable LLM**: OpenAI, Gemini or Ollama, chosen in `.env`.
 
 ## Architecture
 
 ```
- PDFs ----------\                                  +--> chat memory (Buffer / SummaryBuffer)
-                 >-> text Documents -> chunks -> embeddings -> FAISS
- Google Sheets -/                                        ^
-                                                         | top-k similar chunks
- user question -> (1) rewrite follow-up using history -> (2) retrieve -> (3) LLM answer + sources
+ PDFs ----------\
+                 >-> text Documents -> chunks -> embeddings -> FAISS index
+ Google Sheets -/                                         |
+                                                          | top-k similar chunks
+ user question -> rewrite follow-up with chat memory -> retrieve -> LLM answer + sources
+                                                                    |
+                                                          saved to memory
 ```
 
-| Step | File | What it does |
+## Two ways to run
+
+| | `web_app.py` | `app.py` |
 |---|---|---|
-| 1. Data integration | `src/loaders.py` | PDF pages -> Documents; sheet rows -> `Column: value` text |
-| 2. Embedding & indexing | `src/indexer.py` | chunking, embeddings (HuggingFace / OpenAI), FAISS index cached on disk |
-| 3. QA pipeline | `src/rag_chain.py` | condense -> retrieve -> generate, returns answer + sources |
-| 4. Memory | `src/memory.py` | `BufferMemory` (full history), `SummaryBufferMemory` (optional) |
-| 5. Evaluation | `eval/evaluate.py`, `tests/` | retrieval/answer metrics + unit tests |
-| LLM factory | `src/llm.py` | OpenAI / Gemini / Ollama / offline mock |
+| Interface | Browser | Terminal chat |
+| Needs LLM / API key | No | **Yes** (OpenAI, Gemini or Ollama) |
+| Output | Closest passages + sources + similarity | Written answer + sources |
+| Follow-up questions | Previous question is added to the search | LLM rewrites the question |
+| Memory | Buffer | Buffer or summary-buffer |
 
 ## Quick start
 
 ```bash
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
+git clone https://github.com/Ahmeddawood324/rag-knowledge-assistant.git
+cd rag-knowledge-assistant
+python -m venv .venv
+# Windows: .venv\Scripts\activate      macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env                                   # then put your key in .env
-python app.py                                          # chat
+cp .env.example .env
 ```
 
-No API key yet? Try the whole pipeline offline (fake LLM + hashing embeddings - plumbing only, not real AI):
+**Web UI (no API key):**
 
 ```bash
-python app.py --offline
-python -m eval.evaluate --offline
-pytest -q
+python web_app.py        # then open http://127.0.0.1:8000
 ```
 
-Free options: `LLM_PROVIDER=gemini` (free tier) or `ollama` (local); embeddings `huggingface` are free and local.
+**Terminal chat with an LLM:** put your key in `.env` (`OPENAI_API_KEY=...`, or set `LLM_PROVIDER=gemini` and `GOOGLE_API_KEY=...`; Gemini also needs `pip install langchain-google-genai`), then:
 
-### Use your own Google Sheets
-1. Share each sheet: *Share -> Anyone with the link -> Viewer*.
-2. Put the links in `.env`: `SHEET_URLS=courses=https://docs.google.com/spreadsheets/d/XXXX/edit?gid=0`
-3. Run `python app.py --rebuild`.
+```bash
+python app.py            # commands: /history  /sources  /reset  /exit
+```
 
-The code converts the link to the CSV export URL; no Google API/OAuth needed. If a sheet cannot be
-loaded a warning is printed and the other sources still work.
+The first run downloads the embedding model (~470 MB).
 
-### Use your own PDFs
-Drop them in `data/pdfs/` and run `python app.py --rebuild` (the index also rebuilds automatically when data changes).
-Scanned PDFs (images) need OCR first - `pypdf` only reads real text.
+## Configuration (`.env`)
 
-## Chat commands
-`/history` show memory - `/sources` show retrieved chunks and the rewritten search query - `/reset` clear memory - `/exit`
+| Variable | Meaning | Default |
+|---|---|---|
+| `LLM_PROVIDER` | `openai`, `gemini`, `ollama` | `openai` |
+| `EMBEDDING_PROVIDER` | `huggingface`, `openai` | `huggingface` |
+| `TOP_K` | chunks retrieved per question | `4` |
+| `MEMORY_MODE` | `buffer` or `summary_buffer` | `buffer` |
+| `SHEET_URLS` | Google Sheets links (shared as "Anyone with the link: Viewer") | empty = use `data/sheets/*.csv` |
 
-## Memory modes
-`MEMORY_MODE=buffer` (default) keeps the full history. `MEMORY_MODE=summary_buffer` keeps the last
-`SUMMARY_MAX_TURNS` turns and compresses older ones into a summary using the LLM - cheaper for long chats.
+## Sample data and using your own
 
-## Evaluation
-`eval/test_cases.json` has 24 questions (single, follow-up, memory, unanswerable, Arabic).
-`python -m eval.evaluate` writes `eval/results/report.md` with retrieval hit, context recall,
-answer accuracy, refusal correctness, latency, and (with `--judge`) an LLM relevance score.
+`data/` contains a **fictional** university ("Delta Institute of Technology": handbook, services guide, courses and fees) generated by `scripts/make_sample_data.py`, so the project runs out of the box. To use your own knowledge base, put PDFs in `data/pdfs/`, CSVs in `data/sheets/` (or set `SHEET_URLS`), and delete the `storage/` folder to re-index. Scanned PDFs need OCR first.
 
-Important: the report shipped in `eval/results/` was produced with the **offline mock** (it proves the
-pipeline, retrieval and memory logic work, but it does not measure real LLM quality). Run it with your
-real LLM/embeddings and use those numbers in your presentation.
+## Project structure
 
-## Known limitations (good to mention in the discussion)
-- Aggregation questions ("how many courses are in level 3?") are weak in RAG: only top-k rows are seen.
-- Tables inside PDFs may extract as messy text; scanned PDFs need OCR.
-- `top_k=4` can miss answers spread over many chunks; tune `TOP_K` / `CHUNK_SIZE`.
-- Buffer memory grows forever; use `summary_buffer` for long sessions.
-- The FAISS index is loaded with `allow_dangerous_deserialization=True`; only load indexes you built yourself.
+```
+app.py                 terminal chat (RAG + LLM)
+web_app.py             browser UI (retrieval only, no API key)
+src/loaders.py         PDF + Google Sheets / CSV -> documents
+src/indexer.py         chunking, embeddings, FAISS index
+src/memory.py          buffer and summary-buffer memory
+src/rag_chain.py       condense -> retrieve -> generate
+src/llm.py             LLM factory (OpenAI / Gemini / Ollama / offline mock)
+eval/                  evaluation questions and metrics
+tests/                 offline unit tests
+```
+
+## Testing
+
+```bash
+pytest -q                          # offline tests (mock LLM, no downloads)
+python -m eval.evaluate --offline  # evaluation harness with the offline mock
+```
+
+The offline mode only validates the plumbing (loading, indexing, retrieval, memory). Measuring real answer quality requires running `python -m eval.evaluate` with a real LLM; it reports retrieval hit, context recall, answer accuracy and refusal correctness.
+
+## Limitations
+
+- Written answers require an LLM API key; the web UI only shows retrieved passages.
+- Aggregation questions ("how many courses are in level 3?") are weak: RAG only sees the top-k chunks.
+- Tables inside PDFs may extract poorly; scanned PDFs need OCR.
+- The web UI uses a simple rule for follow-ups (short questions are searched together with the previous question).
+
+## Roadmap
+
+Hybrid search (BM25 + vectors), a reranker, OCR for scanned PDFs, a tool for table aggregations, and a hosted demo.
+
+## Author
+
+**Ahmed Dawoud** · [LinkedIn](www.linkedin.com/in/ahmed-dawoud-01a951281)
